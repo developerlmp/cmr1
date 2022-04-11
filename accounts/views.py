@@ -6,6 +6,7 @@ from matplotlib.style import context
 
 from .models import *
 from .forms import OrderForm
+from .filters import OrderFilter
 def home(request):
     orders=Order.objects.all()
     customers=Customer.objects.all()
@@ -26,7 +27,9 @@ def customer(request,pk_test):
     customer=Customer.objects.get(id=pk_test)
     orders=customer.order_set.all()
     order_count = orders.count()
-    context={'customer':customer,'orders':orders,'order_count':order_count}
+    myFilter=OrderFilter(request.GET,queryset=orders)
+    orders=myFilter.qs
+    context={'customer':customer,'orders':orders,'order_count':order_count,'myFilter':myFilter}
     return render(request,'accounts/customer.html',context)
 
 def createOrder(request,pk):
